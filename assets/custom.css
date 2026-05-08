@@ -1,0 +1,47 @@
+/* Dash Power Availability dashboard — spacing and chart heights */
+
+html,
+body {
+  min-height: 100%;
+  background-color: #e8f2fa;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Standalone charts: white panel on blue page */
+.dash-graph {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 12px 4px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+/* Charts inside Bootstrap cards — card supplies the white surface */
+.card .dash-graph {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.chart-xl {
+  min-height: 440px;
+}
+
+.chart-lg {
+  min-height: 360px;
+}
+
+.chart-md {
+  min-height: 300px;
+}
+
+.dashboard-title {
+  letter-spacing: -0.02em;
+}
+
+.filter-card {
+  border-radius: 10px;
+}
