@@ -1,4 +1,5 @@
-FROM python:3.12-slim-bookworm
+# Pinned digest for python:3.12-slim-bookworm (OCI index; multi-arch). Retry deploy if registry times out.
+FROM python@sha256:58525e1a8dada8e72d6f8a11a0ddff8d981fd888549108db52455d577f927f77
 
 WORKDIR /app
 
