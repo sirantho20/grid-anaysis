@@ -1,25 +1,32 @@
-# Tag-based base for reliable registry resolution on builders (e.g. CapRover). For strict reproducibility,
-# optionally repin with an architecture-specific digest once builds are stable (inspect with:
-#   docker buildx imagetools inspect python:3.12-slim-bookworm
-# then pin e.g. FROM python@sha256:<digest matching your server's OS/ARCH output from build logs>).
-FROM python:3.12-slim-bookworm
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DASH_HOST=0.0.0.0 \
+    DASH_PORT=8050
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN addgroup --system app && adduser --system --ingroup app app
 
-COPY app.py .
-COPY data/ data/
-COPY metrics/ metrics/
-COPY assets/ assets/
-COPY grid_data2.xlsx .
+COPY requirements.txt /app/requirements.txt
+RUN pip install --upgrade pip && pip install -r /app/requirements.txt
 
-RUN mkdir -p cache
+COPY --chown=app:app ["app.py", "grid_data2.xlsx", "/app/"]
+COPY --chown=app:app data/ /app/data/
+COPY --chown=app:app metrics/ /app/metrics/
+COPY --chown=app:app assets/ /app/assets/
 
-ENV DASH_HOST=0.0.0.0
-ENV DASH_PORT=8050
+RUN mkdir -p /app/cache && chown -R app:app /app
 
 EXPOSE 8050
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD python -c "import os, urllib.request; port = os.environ.get('DASH_PORT', '8050'); urllib.request.urlopen(f'http://127.0.0.1:{port}/', timeout=3)"
+
+USER app
+
+# Force the Dash server to bind to all interfaces inside the container so
+# published ports work from every host address.
 CMD ["python", "app.py"]
