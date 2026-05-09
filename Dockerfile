@@ -1,5 +1,8 @@
-# Pinned digest for python:3.12-slim-bookworm (OCI index; multi-arch). Retry deploy if registry times out.
-FROM python@sha256:58525e1a8dada8e72d6f8a11a0ddff8d981fd888549108db52455d577f927f77
+# Tag-based base for reliable registry resolution on builders (e.g. CapRover). For strict reproducibility,
+# optionally repin with an architecture-specific digest once builds are stable (inspect with:
+#   docker buildx imagetools inspect python:3.12-slim-bookworm
+# then pin e.g. FROM python@sha256:<digest matching your server's OS/ARCH output from build logs>).
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
